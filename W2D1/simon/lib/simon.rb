@@ -12,7 +12,9 @@ class Simon
   def play
     until game_over
       take_turn
+      system 'clear'
     end
+
     game_over_message
     reset_game
   end
@@ -20,16 +22,33 @@ class Simon
   def take_turn
     show_sequence
     require_sequence
-    round_success_message
-    @sequence_length += 1
+
+    unless @game_over
+      round_success_message
+      @sequence_length += 1
+    end
   end
 
   def show_sequence
     add_random_color
+    @seq.each do |color|
+      puts color
+      sleep 0.75
+      system 'clear'
+      sleep 0.25
+    end
   end
 
   def require_sequence
-
+    puts "repeat the sequence by entering the first letter of each color on a new line"
+    @seq.each do |color|
+      guess = gets.chomp
+      if color[0] != guess
+        @game_over = true
+        break
+      end
+    end
+    sleep 0.25
   end
 
   def add_random_color
@@ -37,11 +56,11 @@ class Simon
   end
 
   def round_success_message
-
+    puts "Great job! Here's the next sequence."
   end
 
   def game_over_message
-
+    puts "Game over! You made it #{@seq.length} rounds."
   end
 
   def reset_game
@@ -49,4 +68,8 @@ class Simon
     @game_over = false
     @seq = []
   end
+end
+
+if __FILE__ == $PROGRAM_NAME
+  Simon.new.play
 end
